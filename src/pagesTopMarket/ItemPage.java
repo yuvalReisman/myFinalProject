@@ -28,7 +28,12 @@ public class ItemPage extends BasePage {
 	private WebElement addToCompareButton;
 	@FindBy(css = ".cm-notification-close.close")
 	private WebElement closeNotificationMessage;
-	
+	@FindBy(css = "div.ty-product-block")
+	private WebElement itemInPage;
+	@FindBy(css = ".cm-amount")
+	private WebElement amountOfItemsField;
+	@FindBy(css = ".cm-notification-content>h1")
+	private WebElement notificationMessageTitle;
 	
 	public ItemPage(WebDriver driver) {
 		super(driver);
@@ -37,6 +42,17 @@ public class ItemPage extends BasePage {
 	public void chooseFirstItem() {
 		waitForElementToBeVisible(itemButton.get(0));
 		itemButton.get(0).click();
+	}
+	
+	public boolean isOnItemPage() {
+		if(itemInPage.isDisplayed())
+			return true;
+		return false;
+	}
+	
+	public int getAmountOfItems() {
+		String valueOfTheAmountBeforeIncrease=amountOfItemsField.getAttribute("value");
+		return Integer.parseInt(valueOfTheAmountBeforeIncrease);
 	}
 	
 	public void increseAmount(int amountToIncrease) {
@@ -68,6 +84,10 @@ public class ItemPage extends BasePage {
 	public void addToCompare() {
 		click(addToCompareButton);
 		waitForElementToBeVisible(notificationMessage);
+	}
+	
+	public String getNotificationMessageTitle() {
+		return yourText(notificationMessageTitle);
 	}
 	
 	public void closeNotificationMessage() {

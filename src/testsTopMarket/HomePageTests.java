@@ -11,60 +11,61 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import bsh.Console;
 import pagesTopMarket.HomePage;
 
-public class HomePageTests extends BaseTest{
+public class HomePageTests extends BaseTest {
 
-	
+	@AfterMethod
+	public void afterEachTest() {
+		navigationpage.getHome();
+		Assert.assertTrue(homepage.isOnHomePage());
+	}
+
 	@Test
 	public void tc01_searchForItem() {
 		navigationpage.searchForItem("computer");
-		WebElement pageTitle=driver.findElement(By.cssSelector("span.ty-mainbox-title__left"));
-		assert pageTitle.getText().equalsIgnoreCase("search results");
-		WebElement logoButton=driver.findElement(By.cssSelector(".top-logo"));
-		logoButton.click();
-	}
-	
-	@Test
-	public void tc02_goHome() {
-		navigationpage.searchForItem("computer");
-		navigationpage.getHome();
-		WebElement categoriesMenu=driver.findElement(By.cssSelector(".cm-popup-box>.ty-menu__items"));
-		assert categoriesMenu.isDisplayed();
-	}
-	
-	@Test
-	public void tc03_searchDepartement() {
-		navigationpage.searchDepartment("Laptops");
-		WebElement pageTitle=driver.findElement(By.cssSelector(".searched-categories>li"));
-		assert pageTitle.getText().contains("Laptops");
-		navigationpage.getHome();
-	}
-	
-	@Test
-	public void tc04_chooseCategoryFromProductCategoriesMenu() {
-		homepage.chooseCategoryFromMenu("CCTV & Alarm");
-		WebElement pageTitle=driver.findElement(By.cssSelector("h1.ty-mainbox-title>span"));
-		assert pageTitle.getText().equalsIgnoreCase("CCTV & Alarm");
-		navigationpage.getHome();
+		String expectedPageTitle = "SEARCH RESULTS";
+		String actualPageTitle = homepage.getsearchResultsPageTitle();
+		Assert.assertEquals(expectedPageTitle, actualPageTitle);
 	}
 
 	@Test
-	public void tc05_hoverCategoryAndChooseFromProductCategoriesMenu() {
-		homepage.hoverCategoryAndChoose("Accessories","Memory Cards");
-		WebElement pageTitle=driver.findElement(By.cssSelector("h1.ty-mainbox-title>span"));
-		assert pageTitle.getText().equalsIgnoreCase("Memory Cards");
-		navigationpage.getHome();
+	public void tc02_searchDepartement() {
+		String chosenDepartement="Laptops";
+		navigationpage.searchDepartment(chosenDepartement);
+		String expectedChosenDEpartmentTitle = chosenDepartement;
+		String actualChosenDEpartmentTitle = homepage.getDepartmentPageTitle();
+		assert actualChosenDEpartmentTitle.contains(expectedChosenDEpartmentTitle);
 	}
-	
+
 	@Test
-	public void tc06_chooseCategoryFromBelow() {
-		homepage.chooseCategoryBelow("ALL IN ONE");
-		WebElement pageTitle=driver.findElement(By.cssSelector("h1.ty-mainbox-title>span"));
-		assert pageTitle.getText().equalsIgnoreCase("All-In-One Computers");
-		navigationpage.getHome();
+	public void tc03_chooseCategoryFromProductCategoriesMenu() {
+		String chosenCategory="CCTV & Alarm";
+		homepage.chooseCategoryFromMenu(chosenCategory);
+		String expectedPageTitle = chosenCategory;
+		String actualPageTitle = homepage.getCategoryPageTitle();
+		assert actualPageTitle.equalsIgnoreCase(expectedPageTitle);
+	}
+
+	@Test
+	public void tc04_hoverCategoryAndChooseFromProductCategoriesMenu() {
+		String chosenCategory="Memory Cards";
+		homepage.hoverCategoryAndChoose("Accessories", chosenCategory);
+		String expectedPageTitle = chosenCategory;
+		String actualPageTitle = homepage.getCategoryPageTitle();
+		assert actualPageTitle.equalsIgnoreCase(expectedPageTitle);
+	}
+
+	@Test
+	public void tc05_chooseCategoryFromBelow() {
+		String chosenCategory="MONITORS";
+		homepage.chooseCategoryBelow(chosenCategory);
+		String expectedPageTitle = chosenCategory;
+		String actualPageTitle = homepage.getCategoryPageTitle();
+		assert actualPageTitle.contains(expectedPageTitle);
 	}
 }

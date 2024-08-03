@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Sleeper;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import bsh.Console;
@@ -22,61 +23,51 @@ import pagesTopMarket.HomePage;
 
 public class ItemsPageTests extends BaseTest {
 
-	@Test
-	public void tc01_hoverCategoryAndChooseFromProductCategoriesMenu() {
+	@BeforeClass
+	public void beforeAllClasses() {
 		homepage.hoverCategoryAndChoose("Hardware", "Networking Cards");
-		WebElement pageTitle = driver.findElement(By.cssSelector("h1.ty-mainbox-title>span"));
-		assert pageTitle.getText().equalsIgnoreCase("Networking Cards");
-	}
-
-	@Test
-	public void tc2_changeAmountOfItems() {
-		String chosenAmountToDisplay="16 Per Page";
-		itemspage.amountOfItems(chosenAmountToDisplay);
-		WebElement amountOfItemsButton=driver.findElement(By.cssSelector("#sw_elm_pagination_steps"));
-		assert amountOfItemsButton.getText().equalsIgnoreCase(chosenAmountToDisplay);
-		boolean amountOfItems=driver.findElements(By.cssSelector(".ty-product-list")).size()==16;
-		assertEquals(amountOfItems, true);
 	}
 	
 	@Test
-	public void tc3_chooseSquareDisplayItems() {
+	public void tc1_changeAmountOfDisplayedItemsInPage() {
+		String chosenAmountToDisplay="16 Per Page";
+		itemspage.amountOfItems(chosenAmountToDisplay);
+		String expectedchosenAmountInField=chosenAmountToDisplay;
+		String actualAmountInField=itemspage.getChosenAmountOfItemsInButton();
+		assert actualAmountInField.equalsIgnoreCase(expectedchosenAmountInField);
+		int expectedAmountOfItems=16;
+		int actualAmountOfItems=itemspage.getAmountOfItems();
+		Assert.assertEquals(expectedAmountOfItems, actualAmountOfItems);
+	}
+	
+	@Test
+	public void tc2_chooseSquareDisplayItems() {
 		itemspage.squareDisplayItems();
-		boolean itemsDisplay = driver.findElements(By.cssSelector(".ty-grid-list__item")).size() > 0;
-		assertEquals(itemsDisplay, true);
+		Assert.assertTrue(itemspage.isSquareDisplayItems());
 	}
 
 	@Test
-	public void tc4_chooseSquareAndListDisplayItems() {
+	public void tc3_chooseSquareAndListDisplayItems() {
 		itemspage.squareAndListDisplayItems();
-		boolean itemsDisplay = driver.findElements(By.cssSelector(".ty-product-list")).size() > 0;
-		assertEquals(itemsDisplay, true);
+		Assert.assertTrue(itemspage.isSquareAndListDisplayItems());
 	}
 
 	@Test
-	public void tc5_chooseListDisplayItems() {
+	public void tc4_chooseListDisplayItems() {
 		itemspage.listDisplayItems();
-		boolean itemsDisplay = driver.findElements(By.cssSelector(".ty-compact-list__content")).size() > 0;
-		assertEquals(itemsDisplay, true);
+		Assert.assertTrue(itemspage.isListDisplayItems());
 	}
 
 	@Test
-	public void tc6_searchForCompany() {
+	public void tc5_searchForCompany() {
 		String companyName = "Nedis";
 		itemspage.searchForCompany(companyName);
-		List<WebElement> CompaniesName = driver.findElements(By.cssSelector("a>label"));
-		for (WebElement eachCompany : CompaniesName) {
-			if (eachCompany.getText().equalsIgnoreCase(companyName)) {
-				assert eachCompany.isDisplayed();
-				break;
-			}
-		}
+		Assert.assertTrue(itemspage.isChosenComapnyDisplayed(companyName));
 	}
 
 	@Test
-	public void tc7_hideProductsFilter() {
+	public void tc6_hideProductsFilter() {
 		itemspage.hideProductsFilter();
-		WebElement productsFilter = driver.findElement(By.cssSelector(".cm-product-filters"));
-		assert productsFilter.isEnabled();
+		Assert.assertTrue(itemspage.isProductsFilterHidden());
 	}
 }

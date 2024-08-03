@@ -32,33 +32,31 @@ public class ItemsPage extends BasePage {
 	private WebElement filterButton;
 	@FindBy(css = ".ty-product-filters__search>input")
 	private WebElement searchButton;
-	
-	
+	@FindBy(css = "#sw_elm_pagination_steps")
+	private WebElement amountOfItemsButton;
+	@FindBy(css = ".ty-product-list")
+	private List<WebElement> amountOfItemsLength;
+	@FindBy(css = ".ty-grid-list__item")
+	private List<WebElement> squareDisplayItems;
+	@FindBy(css = ".ty-product-list")
+	private List<WebElement> squareAndListDisplayItems;
+	@FindBy(css = ".ty-compact-list__content")
+	private List<WebElement> listDisplayItems;
+	@FindBy(css = "a>label")
+	private List<WebElement> CompaniesName;
+	@FindBy(css = ".cm-product-filters")
+	private WebElement productsFilter;
+
 	public ItemsPage(WebDriver driver) {
 		super(driver);
 	}
 
-	public void squareDisplayItems() {
-		click(squareDisplayItemsButton);
-		waitForElementToBeVisible(itemsDisplaySquare);
-	}
-	
-	public void squareAndListDisplayItems() {
-		click(squareAndListDisplayItemsButton);
-		waitForElementToBeVisible(itemsDisplaySquareAndList);
-	}
-	
-	public void listDisplayItems() {
-		click(listDisplayItemsButton);
-		waitForElementToBeVisible(itemsDisplayList);
-	}
-	
 	public void amountOfItems(String chosenAmountToDisplay) {
 		for (WebElement dropDown : dropDownButton) {
-			if(dropDown.getText().equalsIgnoreCase("24 Per Page")) {
+			if (dropDown.getText().equalsIgnoreCase("24 Per Page")) {
 				dropDown.click();
 				for (WebElement option : optionsFromDropDown) {
-					if(option.getText().equalsIgnoreCase(chosenAmountToDisplay)){
+					if (option.getText().equalsIgnoreCase(chosenAmountToDisplay)) {
 						option.click();
 						sleep(2000);
 						break;
@@ -67,15 +65,73 @@ public class ItemsPage extends BasePage {
 			}
 		}
 	}
+
+	public String getChosenAmountOfItemsInButton() {
+		return yourText(amountOfItemsButton);
+	}
+
+	public int getAmountOfItems() {
+		int count=0;
+		for (WebElement item : amountOfItemsLength) {
+			count++;
+		}
+		return count;
+	}
+
+	public void squareDisplayItems() {
+		click(squareDisplayItemsButton);
+		waitForElementToBeVisible(itemsDisplaySquare);
+	}
+
+	public boolean isSquareDisplayItems() {
+		return squareDisplayItems.size() > 0;
+		
+	}
+	
+	public void squareAndListDisplayItems() {
+		click(squareAndListDisplayItemsButton);
+		waitForElementToBeVisible(itemsDisplaySquareAndList);
+	}
+	
+	public boolean isSquareAndListDisplayItems() {
+		return squareAndListDisplayItems.size() > 0;
+		
+	}
+
+	public void listDisplayItems() {
+		click(listDisplayItemsButton);
+		waitForElementToBeVisible(itemsDisplayList);
+	}
+
+	public boolean isListDisplayItems() {
+		return listDisplayItems.size() > 0;
+		
+	}
+
+	public void searchForCompany(String company) {
+		waitForElementToBeVisible(searchButton);
+		click(searchButton);
+		fillInfo(searchButton, company);
+	}
+	
+	public boolean isChosenComapnyDisplayed(String companyName) {
+		for (WebElement eachCompany : CompaniesName) {
+			if (yourText(eachCompany).equalsIgnoreCase(companyName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	public void hideProductsFilter() {
 		waitForElementToBeClickable(filterButton);
 		click(filterButton);
 	}
-	
-	public void searchForCompany(String company) {
-		waitForElementToBeVisible(searchButton);
-		click(searchButton);
-		fillInfo(searchButton, company);
+
+	public boolean isProductsFilterHidden() {
+		if(productsFilter.isEnabled()) {
+			return true;
+		}
+		return false;
 	}
 }
